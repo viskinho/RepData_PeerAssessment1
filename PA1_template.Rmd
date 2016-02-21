@@ -36,20 +36,38 @@ theData <- read.csv('activity.csv')
 ##### 2. Process/transform the data (if necessary) into a format suitable for your analysis
 ```{r}
 ## Calc the number of steps taken per day
-##Checking out the data using 'head()', 'View()' and `str()` methods:
 
 ```r
 str(theData)
 head(theData)
 View(theData) #note the significant amount of NA's
 table(theData$date) #note that each date has 288 datapoints
+##Checking out the data using 'head()', 'View()' and `str()` methods:
 
-dailyStepsy <- tapply(theData$steps, theData$date, sum, na.rm=TRUE)
-## note that NAs were removed
+##dailyStepsy <- tapply(theData$steps, theData$date, sum, na.rm=TRUE)
+##colnames(dailyStepsy) <- c("TotalSteps")
+##View(dailyStepsy)
+stepsPerDay <- aggregate(steps ~ date, theData, sum, na.rm=TRUE)
+colnames(stepsPerDay) <- c("Dates", "steps")
+View(stepsPerDay)
+## note that NAs were removed 
 ```
-##### 1. Plot total number of steps taken each day (histogram)
+##### 1. Plot the number days a certain numer of days was taken (histogram)
 ```{r}
-qplot(dailyStepsy, xlab='Steps per day', ylab='Frequency per 1500', binwidth=1500)
+##qplot(dailyStepsy, 
+##      xlab='Steps per day', 
+##      ylab='Frequency per 1500', 
+##      fill = '#003A6F',
+##      binwidth=1500)
+COFBlue <- '#003A6F'
+ggplot(stepsPerDay, aes(x = steps)) + 
+    geom_histogram(fill = COFBlue, binwidth = 1000, color="black") + 
+    labs(title="Histogram of Steps Taken per Day", 
+         x = "Number of Steps per Day", 
+         y = "Number of times in a day(Count)") + 
+    theme_bw() +
+    theme(text=element_text(size=16, family="Ariel"))
+         
 ```
 ##### 2. Calc mean and median  number of steps taken per day
 ```{r}
