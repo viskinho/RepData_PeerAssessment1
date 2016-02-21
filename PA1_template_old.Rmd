@@ -1,0 +1,64 @@
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
+
+## loading required libraries
+# Load data.table toolset, a more powerful dataset manupulation toolset than data.frame
+library(data.table)
+## load ggplot2 for e.g. the histogram
+library(ggplot2)
+## Making sure that Throughout the  report we always include the code  used to generate the outputpresented. When writing code chunks in the R markdown document, we shal allways use echo = TRUE so that someone else will be able to read the code ##
+
+## load knitr to allow echoing 
+library(knitr)
+# state that we want to show code by setting echo = TRUE
+opts_chunk$set(echo = TRUE, results = 'hold')
+
+## Loading and preprocessing the data
+
+if(!file.exists('activity.csv')){
+    unzip('activity.zip')
+}
+actvtData <- read.csv('activity.csv', header = TRUE, sep = ",",
+                  colClasses=c("numeric", "character", "numeric"))
+# it is always worth looking at the data: e.g. some dates have multiple records
+# View(actvtData)
+
+# the "date"" field was loaded as a string. we should convert this to a date
+actvtData$date <- as.Date(rdata$date, format = "%Y-%m-%d")
+# the "interval" field is not meant to perform math on. it is more of a categorical information filed
+actvtData$interval <- as.factor(rdata$interval)
+# get a idea of how the data is structure
+str(actvtData) 
+# clearly there are a lot of null values which makes sense as not at all times people would be walking
+
+
+
+## What is mean total number of steps taken per day?
+# group by date and sum using "aggregate" to generate the summary statistic
+
+stepsPerDay <- aggregate(steps ~ date, actvtData, sum, na.rm=TRUE)
+colnames(stepsPerDay) <- c("Dates", "steps")
+View(stepsPerDay)
+# plot the sums; note the normal distribution, except for dates where no steps were recorded
+ggplot(stepsPerDay, xlab='Steps per day', ylab='Frequency using binwith 1000', binwidth=1000)
+stepsPerDayMean <- mean(stepsPerDay, na.rm=TRUE)
+stepsPerDayMedian <- median(stepsPerDay)
+
+ggplot(stepsPerDay, aes(x = steps)) + 
+    geom_histogram(fill = "blue", binwidth = 1000) + 
+    labs(title="Histogram of Steps Taken per Day", 
+         x = "Number of Steps per Day", y = "Number of times in a day(Count)") + theme_bw() 
+         
+## What is the average daily activity pattern?
+
+
+
+## Imputing missing values
+
+
+
+## Are there differences in activity patterns between weekdays and weekends?
