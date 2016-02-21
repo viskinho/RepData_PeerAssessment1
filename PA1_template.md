@@ -155,7 +155,8 @@ averageStepsPerT$meanSteps),]
 # should result in interval 835 for meanSteps of 206.1698
 ```
 
-* The most steps were taken at time interval: 835, 206.1698113
+* The most steps were taken at time interval: 835
+* The number of steps taken was: 
 
 ## 6. Code to describe and show a strategy for imputing missing data
 ##### 6.1. Calc NAs in the dataset 
@@ -166,11 +167,11 @@ numMissingValues <- length(which(is.na(theData$steps)))
 * Number of missing values: 2304
 
 ##### 6.2 Create a new dataset that is equal to the original dataset with imputed data
-#### impute is a very handy function here from the Hmisc package
-#### we'll impute the mean where values are NA
+
 
 ```r
-theDataImputed <- theData
+# impute is a very handy function here from the Hmisc package
+# we'll impute the mean where values are NAtheDataImputed <- theData
 theDataImputed$steps <- impute(theData$steps, fun=mean)
 ```
 
@@ -185,8 +186,8 @@ qplot(dailyStepsImputed, xlab='Steps per day - imputed', ylab='Frequency using b
 
 ![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png)
 
-##### calc the mean and median total number of steps taken per day
-##### to assess if imputing made any difference
+##### 7.1 Calc the mean and median total number of steps taken per day
+##### 7.2 Cassess if imputing made any difference
 
 ```r
 dailyStepsyMeanImputed <- mean(dailyStepsImputed)
