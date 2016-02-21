@@ -1,25 +1,138 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer assessment 1
+### *Steven Devisch*
+### *February 20th 2016*
+###### Github repository : https://github.com/viskinho/RepData_PeerAssessment1
 
+## Introduction
+Purpose of this assignment is to write a report that answers the questions detailed below. 
+
+Ultimately, one was required  to complete the entire assignment in a single R markdown document
+that can be processed by knitr and be transformed into an HTML file.
+See https://github.com/viskinho/RepData_PeerAssessment1 for more details
+
+## Prepare the R environment
+
+The assignment requires that throughout the report to echo code chunks such that 
+someone else will be able to read the code at any time. 
+
+We therefore we set echo equal a **TRUE** and results equal a **'hold'** as 
+global options for this document.  
+
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+library(ggplot2)
+library(scales)
+library(Hmisc)
+```
 
 ## Loading and preprocessing the data
+##### 1. Load the data (i.e. read.csv())
+```{r, results='markup', warning=TRUE, message=TRUE}
+if(!file.exists('activity.csv')){
+        unzip('activity.zip')
+}
+theData <- read.csv('activity.csv')
+```
+##### 2. Process/transform the data (if necessary) into a format suitable for your analysis
+```{r}
+## Calc the number of steps taken per day
+##Checking out the data using 'head()', 'View()' and `str()` methods:
 
+```r
+str(theData)
+head(theData)
+View(theData) #note the significant amount of NA's
+table(theData$date) #note that each date has 288 datapoints
 
+dailyStepsy <- tapply(theData$steps, theData$date, sum, na.rm=TRUE)
+## note that NAs were removed
+```
+##### 1. Plot total number of steps taken each day (histogram)
+```{r}
+qplot(dailyStepsy, xlab='Steps per day', ylab='Frequency per 1500', binwidth=1500)
+```
+##### 2. Calc mean and median  number of steps taken per day
+```{r}
+dailyStepsyMean <- mean(dailyStepsy)
+dailyStepsyMedian <- median(dailyStepsy)
+```
+* Mean: `r dailyStepsyMean`
+* Median:  `r dailyStepsyMedian`
 
-## What is mean total number of steps taken per day?
+## Calc average daily activity pattern by leveraging the "group-by" aggregate function
+## Assign column names  interval and meansteps
+## Note that 'by' must be a list
+```{r}
+averageStepsPerT <- aggregate(x=list(meanSteps=theData$steps), by=list(interval=theData$interval), FUN=mean, na.rm=TRUE)
+```
 
+##### 1. Plot avg daily activity pattern
+## aes sets what the x and y axes are
+```{r}
+ggplot(data=averageStepsPerT, aes(x=interval, y=meanSteps)) +
+        geom_line() +
+        xlab("5-minute interval") +
+        ylab("Avg steps taken by 5-minute interval") 
+```
 
+##### 2. Which 5-minute interval contains the maximum number of steps?
+```{r}
+intervalWithMostSteps <- averageStepsPerT[which.max(  
+averageStepsPerT$meanSteps),]
+```
 
-## What is the average daily activity pattern?
+* Most Steps at: `r intervalWithMostSteps`
 
-
-
+----
+        
 ## Imputing missing values
+##### 1. Calc NAs in the dataset 
+```{r}
+numMissingValues <- length(which(is.na(theData$steps)))
+```
+* Number of missing values: `r numMissingValues`
+
+##### 2. Define how to Impute missing data 
+##### 3. Create a new dataset that is equal to the original dataset with imputed data
+## impute is a very handy function here from the Hmisc package
+```{r}
+theDataImputed <- theData
+theDataImputed$steps <- impute(theData$steps, fun=mean)
+```
+
+##### 4. Make a histogram of the total number of steps taken each day 
+```{r}
+dailyStepsImputed <- tapply(theDataImputed$steps, theDataImputed$date, sum)
+qplot(dailyStepsImputed, xlab='Steps per day - imputed', ylab='Frequency using binwith 1500', binwidth=1500)
+```
+
+##### calc the mean and median total number of steps taken per day. 
+```{r}
+dailyStepsyMeanImputed <- mean(dailyStepsImputed)
+dailyStepsyMedianImputed <- median(dailyStepsImputed)
+```
+* Mean (Imputed): `r dailyStepsyMeanImputed`
+* Median (Imputed):  `r dailyStepsyMedianImputed`
 
 
-
+----
+        
 ## Are there differences in activity patterns between weekdays and weekends?
+##### 1. Create a new factor variable w "weekday" and "weekend" usign POSIX functions
+        
+```{r}
+theDataImputed$dayType <-  ifelse(as.POSIXlt(theDataImputed$date)$wday %in% c(0,6), 'weekend', 'weekday')
+```
+
+##### 2. Plot side-by-side timeseries to compare
+## calc mean nr of steps and group by interval and type of day
+## facet_grid givs us multiple panels, in this case by what type of day the day was
+```{r}
+averagedtheDataImputed <- aggregate(steps ~ interval + dayType, data=theDataImputed, mean)
+ggplot(averagedtheDataImputed, aes(interval, steps)) + 
+        geom_line() + 
+        facet_grid(dayType ~ .) +
+        xlab("5-minute interval") + 
+        ylab("Avg number of steps per 5-minute interval") +
+        theme_bw() 
+```
