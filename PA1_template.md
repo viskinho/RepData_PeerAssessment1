@@ -21,6 +21,12 @@ global options for this document.
 {r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 
 
+```r
+library(ggplot2)
+library(scales)
+library(Hmisc)
+options(scipen = 999) # turn off scientific notation
+```
 
 ## 1. Code for reading in the dataset and/or processing the data
 ##### 1.1 Load the data (i.e. read.csv())
@@ -123,7 +129,7 @@ ggplot(stepsPerDay, aes(x = steps)) +
 dailyStepsMean <- mean(stepsPerDay$steps)
 dailyStepsMedian <- median(stepsPerDay$steps)
 ```
-* Mean steps taken overall: 1.0766189 &times; 10<sup>4</sup>
+* Mean steps taken overall: 10766.1886792
 * Median steps taken overall:  10765
 
 ## 4. Time series plot of the average number of steps taken per time interval
@@ -156,7 +162,7 @@ averageStepsPerT$meanSteps),]
 ```
 
 * The most steps were taken at time interval: 835
-* The number of steps taken was: 
+* The number of steps taken was: 206.1698113
 
 ## 6. Code to describe and show a strategy for imputing missing data
 ##### 6.1. Calc NAs in the dataset 
@@ -193,10 +199,10 @@ qplot(dailyStepsImputed, xlab='Steps per day - imputed', ylab='Frequency using b
 dailyStepsyMeanImputed <- mean(dailyStepsImputed)
 dailyStepsyMedianImputed <- median(dailyStepsImputed)
 ```
-* Mean (Imputed): 1.0766189 &times; 10<sup>4</sup>
-* Mean steps taken (original): 1.0766189 &times; 10<sup>4</sup>
+* Mean (Imputed): 10766.1886792
+* Mean steps taken (original): 10766.1886792
 
-* Median (Imputed):  1.0766189 &times; 10<sup>4</sup>
+* Median (Imputed):  10766.1886792
 * Median steps taken (original):  10765
 
 ## 8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends

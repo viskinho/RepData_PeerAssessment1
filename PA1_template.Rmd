@@ -20,10 +20,11 @@ global options for this document.
 
 {r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 
-```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+```{r, echo=TRUE, results='hold', warning=FALSE, message=FALSE}
 library(ggplot2)
 library(scales)
 library(Hmisc)
+options(scipen = 999) # turn off scientific notation
 ```
 
 ## 1. Code for reading in the dataset and/or processing the data
@@ -98,7 +99,7 @@ averageStepsPerT$meanSteps),]
 ```
 
 * The most steps were taken at time interval: `r intervalWithMostSteps$interval`
-* The number of steps taken was: `r intervalWithMostSteps$meansteps`
+* The number of steps taken was: `r intervalWithMostSteps$meanSteps`
 
 ## 6. Code to describe and show a strategy for imputing missing data
 ##### 6.1. Calc NAs in the dataset 
